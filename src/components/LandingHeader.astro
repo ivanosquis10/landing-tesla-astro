@@ -1,0 +1,113 @@
+---
+import Logo from './Logo.astro'
+---
+
+<header
+  id='landing-header'
+  class='px-8 py-3 flex items-center justify-between fixed top-0 w-full z-40'
+>
+  <div class='flex flex-grow basis-0'>
+    <a href='/'>
+      <Logo />
+    </a>
+  </div>
+
+  <nav class='flex flex-grow justify-center'>
+    <ul
+      class='flex text-sm [&>li>a]:transition-colors [&>li>a]:duration-500 [&>li>a]:text-current [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2'
+    >
+      <li>
+        <a href='/'>Model S</a>
+      </li>
+      <li>
+        <a href='/'>Model 3</a>
+      </li>
+      <li>
+        <a href='/'>Model X</a>
+      </li>
+      <li>
+        <a href='/'>Model Y</a>
+      </li>
+      <li>
+        <a href='/'>Solar Roof</a>
+      </li>
+      <li>
+        <a href='/'>Solar Panels</a>
+      </li>
+      <li>
+        <a href='/'>Powerwall</a>
+      </li>
+    </ul>
+  </nav>
+
+  <nav class='flex flex-grow basis-0 justify-end'>
+    <ul
+      class='flex text-sm [&>li>a]:transition-colors [&>li>a]:duration-500 [&>li>a]:text-current [&>li>a]:font-medium [&>li>a]:inline-block [&>li>a]:px-4 [&>li>a]:py-2'
+    >
+      <li>
+        <a href='/'>Shop</a>
+      </li>
+      <li><a href='/'>Account</a></li>
+      <li><a href='/'>Menú</a></li>
+    </ul>
+  </nav>
+
+  <div
+    id='menu-backdrop'
+    class={`
+      absolute bg-black/5 backdrop-blur-sm rounded translate-x-[var(--left)] translate-y-[var(--top)]
+      left-0
+      top-0
+      w-[var(--width)] h-[var(--height)]
+      transition-all duration-300 ease-in-out
+      opacity-0 -z-10
+    `}
+  >
+  </div>
+</header>
+
+<script>
+  const listItem = document.querySelectorAll('#landing-header li')
+  const menuBackdrop = document.querySelector('#menu-backdrop') as HTMLElement
+
+  listItem.forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      const { left, top, width, height } = item.getBoundingClientRect()
+      menuBackdrop.style.setProperty('--left', `${left}px`)
+      menuBackdrop.style.setProperty('--top', `${top}px`)
+      menuBackdrop.style.setProperty('--width', `${width}px`)
+      menuBackdrop.style.setProperty('--height', `${height}px`)
+      menuBackdrop.style.opacity = '1'
+      menuBackdrop.style.visibility = 'visible'
+    })
+
+    item.addEventListener('mouseleave', () => {
+      menuBackdrop.style.opacity = '0'
+      menuBackdrop.style.visibility = 'hidden'
+    })
+  })
+</script>
+
+<script>
+  const $header = document.querySelector('#landing-header') as HTMLElement
+  // usaremos intersection observer para cambiar el color del header
+  const observerOption = {
+    root: null,
+    rootMargin: '0px', // en cuando se vea el elemento, actua.
+    threshold: 0.9, // porcentaje de visibilidad
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const { isIntersecting } = entry
+
+      if (isIntersecting) {
+        const color = entry.target.getAttribute('data-header-color') // obtenemos el color por el dara que colocamos en los sections
+        $header.style.color = color
+      }
+    })
+  }, observerOption)
+
+  const $sections = document.querySelectorAll('.landing-section')
+  $sections.forEach(section => observer.observe(section))
+</script>
